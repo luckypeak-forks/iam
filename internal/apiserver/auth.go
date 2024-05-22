@@ -96,6 +96,7 @@ func newAutoAuth() middleware.AuthStrategy {
 	return auth.NewAutoStrategy(newBasicAuth().(auth.BasicStrategy), newJWTAuth().(auth.JWTStrategy))
 }
 
+// authenticator 会被 LoginHandler 调用，来完成 Basic 认证。authenticator 会根据 username 从数据库中查出 user 的详细信息并返回。
 func authenticator() func(c *gin.Context) (interface{}, error) {
 	return func(c *gin.Context) (interface{}, error) {
 		var login loginInfo
@@ -188,6 +189,7 @@ func loginResponse() func(c *gin.Context, code int, token string, expire time.Ti
 	}
 }
 
+// payloadFunc 会被 LoginHandler 调用，用来生成 token 的载荷
 func payloadFunc() func(data interface{}) jwt.MapClaims {
 	return func(data interface{}) jwt.MapClaims {
 		claims := jwt.MapClaims{

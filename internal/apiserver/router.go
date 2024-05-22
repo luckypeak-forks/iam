@@ -32,10 +32,10 @@ func installMiddleware(g *gin.Engine) {
 func installController(g *gin.Engine) *gin.Engine {
 	// Middlewares.
 	jwtStrategy, _ := newJWTAuth().(auth.JWTStrategy)
-	g.POST("/login", jwtStrategy.LoginHandler)
-	g.POST("/logout", jwtStrategy.LogoutHandler)
+	g.POST("/login", jwtStrategy.LoginHandler)   // LoginHandler 会调用我们提供的 Authenticator、PayloadFunc 等函数签发 token
+	g.POST("/logout", jwtStrategy.LogoutHandler) // LogoutHandler 会清空 Cookie 中 Bearer 认证的相关信息
 	// Refresh time can be longer than token timeout
-	g.POST("/refresh", jwtStrategy.RefreshHandler)
+	g.POST("/refresh", jwtStrategy.RefreshHandler) // RefreshHandler 会先验证 token，通过验证则刷新 token
 
 	auto := newAutoAuth()
 	g.NoRoute(auto.AuthFunc(), func(c *gin.Context) {
